@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.tdp.crimes.model.Event;
 
@@ -87,4 +89,34 @@ public class EventsDao {
 			return null ;
 		}
 	}
+	
+	public Map<Integer, Integer> criminalita(int anno) {
+			String sql = "select district_id as id, count(distinct incident_id) as tot from events where year(reported_date)=? group by district_id";
+			try {
+				Connection conn = DBConnect.getConnection() ;
+
+				PreparedStatement st = conn.prepareStatement(sql) ;
+				st.setInt(1, anno);
+				Map<Integer, Integer> list = new HashMap<>() ;
+				
+				ResultSet res = st.executeQuery() ;
+				
+				while(res.next()) {
+					try {
+						list.put(res.getInt("id"), res.getInt("tot"));
+					} catch (Throwable t) {
+						t.printStackTrace();
+						System.out.println(res.getInt("id"));
+					}
+				}
+				
+				conn.close();
+				return list ;
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null ;
+			}
+		}
 }

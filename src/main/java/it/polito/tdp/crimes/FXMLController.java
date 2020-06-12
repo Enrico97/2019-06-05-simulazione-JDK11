@@ -32,10 +32,10 @@ public class FXMLController {
     private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGiorno"
-    private ComboBox<?> boxGiorno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxGiorno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnCreaReteCittadina"
     private Button btnCreaReteCittadina; // Value injected by FXMLLoader
@@ -63,6 +63,9 @@ public class FXMLController {
 
     @FXML
     void doSimula(ActionEvent event) {
+    	txtResult.clear();
+    	model.simula(boxAnno.getValue(), boxMese.getValue(), boxGiorno.getValue(), Integer.parseInt(txtN.getText()));
+    	txtResult.appendText(model.malGestiti()+"");
 
     }
 
@@ -81,5 +84,7 @@ public class FXMLController {
     public void setModel(Model model) {
     	this.model = model;
     	boxAnno.getItems().addAll(model.anni());
+    	boxMese.getItems().addAll(model.mesi());
+    	boxGiorno.getItems().addAll(model.giorni());
     }
 }
