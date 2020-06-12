@@ -7,6 +7,10 @@ package it.polito.tdp.crimes;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.jgrapht.Graphs;
+import org.jgrapht.graph.DefaultWeightedEdge;
+
+import it.polito.tdp.crimes.db.Vertici;
 import it.polito.tdp.crimes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,7 +29,7 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
     private ComboBox<?> boxMese; // Value injected by FXMLLoader
@@ -47,7 +51,14 @@ public class FXMLController {
 
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
-
+    	txtResult.clear();
+    	for(Vertici v : model.creaGrafo(boxAnno.getValue()).vertexSet()) {
+    		txtResult.appendText(v.getId()+":\n");
+    		for(Vertici vv : Graphs.neighborListOf(model.creaGrafo(boxAnno.getValue()), v)) {
+    			double e = model.creaGrafo(boxAnno.getValue()).getEdgeWeight(model.creaGrafo(boxAnno.getValue()).getEdge(v, vv));
+    			txtResult.appendText(vv.getId()+" - "+e+"\n");
+    	}
+    	}
     }
 
     @FXML
@@ -69,5 +80,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	boxAnno.getItems().addAll(model.anni());
     }
 }

@@ -2,6 +2,7 @@ package it.polito.tdp.crimes.db;
 
 
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,5 +57,34 @@ public class EventsDao {
 			return null ;
 		}
 	}
+	
+	public List<Vertici> vertici(int anno){
+		String sql = "SELECT distinct avg(geo_lon), avg(geo_lat), district_id FROM events WHERE YEAR(events.reported_date)=? group by district_id order by district_id";
+		try {
+			Connection conn = DBConnect.getConnection() ;
 
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, anno);
+			List<Vertici> list = new ArrayList<>() ;
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					list.add(new Vertici(res.getDouble("avg(geo_lon)"), res.getDouble("avg(geo_lat)"), res.getInt("district_id")));
+				} catch (Throwable t) {
+					t.printStackTrace();
+					System.out.println(res.getInt("id"));
+				}
+			}
+			
+			conn.close();
+			return list ;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
 }
